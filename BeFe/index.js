@@ -139,6 +139,47 @@ app.get('/mahasiswa/:id', async (req, res) => {
     }
 });
 
+app.put('/mahasiswa/:id', async (req, res) => {
+    try {
+        const mahasiswaId = req.params.id;
+        const updatedData = req.body; // Assuming the updated data is sent in the request body
+        const dbRef = ref(db);
+        const mahasiswaRef = child(dbRef, `mahasiswa/${mahasiswaId}`);
+        
+        const snapshot = await get(mahasiswaRef);
+        if (!snapshot.exists()) {
+            return res.status(404).json({
+                metadata: {
+                    status: "error",
+                    code: 404,
+                    message: "Mahasiswa not found"
+                }
+            });
+        }
+
+        // Update the mahasiswa data
+        await set(mahasiswaRef, updatedData);
+        
+        res.status(200).json({
+            metadata: {
+                status: "ok",
+                code: 200,
+                message: "Mahasiswa updated successfully"
+            }
+        });
+    } catch (error) {
+        console.error('Error updating mahasiswa:', error);
+        res.status(500).json({
+            metadata: {
+                status: "error",
+                code: 500,
+                message: "Internal server error"
+            }
+        });
+    }
+});
+
+
 app.get('/dashboard', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });

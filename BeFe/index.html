@@ -101,7 +101,7 @@
                         <label for="kelas">Kelas:</label>
                         <input type="text" id="kelas" name="kelas" required>
                     </div>
-                    <button type="submit">Submit</button>
+                    <button type="submit" id="submitButton">Submit</button>
                 </form>
             </div>
 
@@ -170,8 +170,10 @@
             };
 
             try {
-                const response = await fetch(`${API_URL}/mahasiswa`, {
-                    method: 'POST',
+                const method = editingId ? 'PUT' : 'POST';
+                const url = editingId ? `${API_URL}/mahasiswa/${editingId}` : `${API_URL}/mahasiswa`;
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -180,6 +182,7 @@
 
                 if (response.ok) {
                     document.getElementById('studentForm').reset();
+                    document.getElementById('submitButton').textContent = 'Submit'; // Reset button text
                     fetchStudents();
                     editingId = null;
                 } else {
@@ -217,6 +220,7 @@
             document.getElementById('npm').value = student.npm;
             document.getElementById('nama').value = student.nama;
             document.getElementById('kelas').value = student.kelas;
+            document.getElementById('submitButton').textContent = 'Edit'; // Change button text to Edit
         }
 
         // Initial load
